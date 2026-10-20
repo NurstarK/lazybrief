@@ -1,0 +1,9 @@
+{"id": "a1b2c3d4", "ts": "2026-10-20T09:12:00-07:00", "kind": "link", "text": "https://arxiv.org/abs/2610.01234 — paper on long-horizon agent memory", "source": "cli"}
+{"id": "b2c3d4e5", "ts": "2026-10-20T09:40:00-07:00", "kind": "link", "text": "https://github.com/ollama/ollama/releases — new ollama release, check changelog", "source": "cli"}
+{"id": "c3d4e5f6", "ts": "2026-10-20T11:05:00-07:00", "kind": "todo", "text": "remember to renew the domain before it expires friday", "source": "cli"}
+{"id": "d4e5f6a7", "ts": "2026-10-20T11:30:00-07:00", "kind": "note", "text": "idea: cache the model warmup so the overnight run starts faster", "source": "cli"}
+{"id": "e5f6a7b8", "ts": "2026-10-20T13:15:00-07:00", "kind": "link", "text": "https://news.ycombinator.com/item?id=99999999 — thread on running Gemma on a laptop", "source": "cli"}
+{"id": "f6a7b8c9", "ts": "2026-10-20T14:50:00-07:00", "kind": "todo", "text": "reply to the issue about the brief being too long", "source": "cli"}
+{"id": "a7b8c9d0", "ts": "2026-10-20T16:20:00-07:00", "kind": "note", "text": "the arxiv paper above and the hn thread are basically the same topic", "source": "cli"}
+{"id": "b8c9d0e1", "ts": "2026-10-20T18:00:00-07:00", "kind": "link", "text": "https://example.com/some-newsletter-i-already-read — skip, already read this", "source": "cli"}
+{"id": "c9d0e1f2", "ts": "2026-10-20T21:10:00-07:00", "kind": "todo", "text": "water the plants", "source": "cli"}

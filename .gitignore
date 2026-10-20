@@ -1,0 +1,4 @@
+# Runtime data — your actual inbox, archive, and generated briefs stay local.
+data/
+*.cast
+__pycache__/
