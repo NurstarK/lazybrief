@@ -77,6 +77,7 @@ job. Gemma is what makes this useful.
 | `lazybrief.py brief` | Sort the inbox with the model, write a dated brief, archive the items. |
 | `lazybrief.py brief --offline` | Same, without a model (degraded; for testing/CI). |
 | `lazybrief.py brief --keep` | Don't archive after briefing. |
+| `lazybrief.py brief --brief-file <path>` | Also write the compact brief to a file (used by the Aeon skill). |
 | `lazybrief.py stats` | Inbox / archive / brief counts. |
 | `lazybrief.py doctor` | Check Ollama + model wiring. |
 
@@ -118,13 +119,47 @@ under `data/`, which is `.gitignore`d.
   bogus item references are ignored, items the model skipped land in an
   "Unsorted" cluster, dropped items get their own "Dropped" cluster, and the
   brief is hard-capped at five lines.
-- **As an Aeon skill** (`skill/SKILL.md`; clone this repo into your Aeon
-  install as `apps/lazybrief`), an overnight cron runs the brief and
-  pushes the five lines to Telegram/Discord/Slack via Aeon's `./notify`. Aeon
-  supplies the scheduling, notification fan-out, and memory; Gemma supplies the
-  thinking. Both are open.
+- **As an Aeon skill**, an overnight schedule runs the brief and hands the five
+  lines to Aeon's `./notify`, which delivers them to Telegram, Discord or Slack.
+  Aeon supplies the scheduling, notification delivery and run log; Gemma
+  supplies the thinking. Both are open.
 
 ---
+
+## Run it nightly with Aeon
+
+[Aeon](https://github.com/aeonfun/aeon) is an open-source agent harness. From
+the root of your Aeon repo:
+
+```bash
+git clone https://github.com/NurstarK/lazybrief apps/lazybrief
+mkdir -p skills/lazybrief
+cp apps/lazybrief/skill/SKILL.md skills/lazybrief/SKILL.md
+```
+
+Then add one line under `skills:` in `aeon.yml` (schedules are UTC):
+
+```yaml
+  lazybrief: { enabled: true, schedule: "0 5 * * *", var: "" } # overnight do-it-later inbox -> 5-line brief (local Ollama)
+```
+
+The skill runs `doctor`, then `brief --brief-file apps/lazybrief/data/notify.md`,
+then `./notify --title "Lazybrief" -f apps/lazybrief/data/notify.md`. If the model
+is down it sends a warning instead of an empty brief.
+
+**It has to run where Ollama runs.** Aeon's default home is hosted GitHub
+Actions, and a hosted runner can't reach `localhost:11434` or your local inbox.
+Run the skill on your own machine or a self-hosted runner.
+
+**What's been tested:** this setup was checked against a fresh clone of
+`aeonfun/aeon`. Aeon's config validator (`scripts/validate-config.js`) and
+category lint pass with the entry above. The skill was run end to end through
+Aeon's harness with `scripts/dry-run.sh run lazybrief` on an M4 Mac, using
+Gemma 3 on Ollama. That mode captures notifications instead of sending them.
+The run passed, and the captured `./notify` payload held the five-line brief.
+With Ollama stopped, the skill queued the "model not ready" warning instead
+and left the inbox untouched.
+Delivery to a real Telegram, Discord or Slack channel has not been tested here.
 
 ## Tests
 

@@ -377,6 +377,8 @@ def cmd_brief(args) -> int:
     items = read_jsonl(inbox_path())
     if not items:
         print("inbox is empty — nothing to sort. Stay lazy.")
+        if args.brief_file:
+            Path(args.brief_file).write_text("Lazybrief: quiet night, nothing to sort.\n", encoding="utf-8")
         return 0
 
     model_label = f"{args.model} via Ollama"
@@ -407,6 +409,8 @@ def cmd_brief(args) -> int:
     # Emit the compact brief to stdout (what a notification would carry) and the
     # path to the full markdown.
     print(one_paragraph(result))
+    if args.brief_file:
+        Path(args.brief_file).write_text(one_paragraph(result) + "\n", encoding="utf-8")
     try:
         shown = brief_file.resolve().relative_to(Path.cwd().resolve())
     except ValueError:
@@ -479,6 +483,7 @@ def build_parser() -> argparse.ArgumentParser:
     b.add_argument("--offline", action="store_true", help="skip the model (degraded, for testing)")
     b.add_argument("--keep", action="store_true", help="do not archive the inbox after briefing")
     b.add_argument("--timeout", type=int, default=180, help="model timeout seconds (default: 180)")
+    b.add_argument("--brief-file", help="also write the compact brief to this file (for ./notify -f)")
     b.set_defaults(func=cmd_brief)
 
     s = sub.add_parser("stats", help="inbox / archive / brief counts")

@@ -48,8 +48,11 @@ def test_roundtrip(home):
     r = run(home, "list")
     check("list shows 3 items", "3 item(s)" in r.stdout)
 
-    r = run(home, "brief", "--offline")
+    brief_file = Path(home) / "notify.md"
+    r = run(home, "brief", "--offline", "--brief-file", str(brief_file))
     check("offline brief exits 0", r.returncode == 0)
+    check("--brief-file holds the compact brief",
+          brief_file.exists() and brief_file.read_text().startswith("*Lazybrief"))
     check("brief has header", "Lazybrief" in r.stdout)
     check("inbox cleared after brief", "archived 3 items" in r.stdout)
 
