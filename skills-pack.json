@@ -1,0 +1,20 @@
+{
+  "name": "Lazybrief",
+  "version": "0.1.0",
+  "description": "Overnight do-it-later inbox: a local Gemma (via Ollama) sorts the day's links, notes and todos into a five-line morning brief. No keys, no per-token cost, nothing leaves the machine.",
+  "author": "NurstarK",
+  "license": "MIT",
+  "homepage": "https://github.com/NurstarK/lazybrief",
+  "skills": [
+    {
+      "slug": "lazybrief",
+      "path": "skills/lazybrief",
+      "description": "Run the overnight Lazybrief sort on a local Gemma (Ollama) and deliver the five-line brief through ./notify. Needs a self-hosted runner or local run — the model lives on localhost:11434.",
+      "category": "productivity",
+      "schedule": "0 5 * * *",
+      "default_enabled": false,
+      "secrets_optional": ["LAZYBRIEF_MODEL", "OLLAMA_HOST", "LAZYBRIEF_HOME"],
+      "capabilities": ["sends_notifications"]
+    }
+  ]
+}

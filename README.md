@@ -128,28 +128,35 @@ under `data/`, which is `.gitignore`d.
 
 ## Run it nightly with Aeon
 
-[Aeon](https://github.com/aeonfun/aeon) is an open-source agent harness. From
-the root of your Aeon repo:
+[Aeon](https://github.com/aeonfun/aeon) is an open-source agent harness. This
+repo is an Aeon **community skill pack** — from the root of your Aeon repo:
 
 ```bash
-git clone https://github.com/NurstarK/lazybrief apps/lazybrief
-mkdir -p skills/lazybrief
-cp apps/lazybrief/skill/SKILL.md skills/lazybrief/SKILL.md
+bin/install-skill-pack NurstarK/lazybrief
 ```
 
-Then add one line under `skills:` in `aeon.yml` (schedules are UTC):
+That installs the skill (disabled by default). Then clone the app **outside**
+your Aeon checkout, pinned to a release tag:
+
+```bash
+git clone --branch v0.1.0 --depth 1 https://github.com/NurstarK/lazybrief /opt/lazybrief
+```
+
+and enable it in `aeon.yml`, pointing `var` at the checkout (schedules are UTC):
 
 ```yaml
-  lazybrief: { enabled: true, schedule: "0 5 * * *", var: "" } # overnight do-it-later inbox -> 5-line brief (local Ollama)
+  lazybrief: { enabled: true, schedule: "0 5 * * *", var: "/opt/lazybrief" } # overnight do-it-later inbox -> 5-line brief (local Ollama)
 ```
 
-The skill runs `doctor`, then `brief --brief-file apps/lazybrief/data/notify.md`,
-then `./notify --title "Lazybrief" -f apps/lazybrief/data/notify.md`. If the model
-is down it sends a warning instead of an empty brief.
+The skill runs `doctor`, then `brief --brief-file <app>/data/notify.md`, then
+`./notify --title "Lazybrief" -f <app>/data/notify.md`. If the model is down it
+sends a warning instead of an empty brief.
 
 **It has to run where Ollama runs.** Aeon's default home is hosted GitHub
 Actions, and a hosted runner can't reach `localhost:11434` or your local inbox.
-Run the skill on your own machine or a self-hosted runner.
+Run the skill on your own machine or a self-hosted runner. On a self-hosted
+runner, keep the checkout outside the Aeon repo (as above): `actions/checkout`
+wipes the Aeon workspace — inbox included — before every run.
 
 **What's been tested:** this setup was checked against a fresh clone of
 `aeonfun/aeon`. Aeon's config validator (`scripts/validate-config.js`) and

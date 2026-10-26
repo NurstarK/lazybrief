@@ -4,11 +4,13 @@ description: Overnight do-it-later inbox. A local Gemma (via Ollama) sorts the l
 metadata:
   title: Lazybrief
   category: productivity
-  var: ""  # ""=use apps/lazybrief | <path>=Lazybrief checkout somewhere else
+  var: ""
   tags:
     - productivity
     - local-model
   mode: write
+  capabilities:
+    - sends_notifications
 ---
 > **${var}** — Optional path to the Lazybrief checkout. Default: `apps/lazybrief`.
 
@@ -54,23 +56,35 @@ sandbox denies chained commands.
 
 ## Where it runs
 
-The model lives on `localhost:11434`. A hosted GitHub Actions runner cannot reach
-it, and the inbox lives in `APP/data/` on your own disk. Run this skill wherever
-Ollama and the inbox are: your own machine, or a self-hosted runner on it.
+The model lives on `localhost:11434`. A hosted GitHub Actions runner cannot
+reach it, so run this skill wherever Ollama is: your own machine, or a
+self-hosted runner on it.
+
+On a self-hosted runner, `actions/checkout` wipes the Aeon workspace before
+every run — anything cloned into `apps/` is deleted, inbox included. Keep the
+Lazybrief checkout (and its `data/` inbox) **outside** the Aeon repo and point
+`${var}` at it with an absolute path.
 
 ## Install
 
-From the root of your Aeon repo:
+Install the skill from the pack:
 ```bash
-git clone https://github.com/NurstarK/lazybrief apps/lazybrief
-mkdir -p skills/lazybrief
-cp apps/lazybrief/skill/SKILL.md skills/lazybrief/SKILL.md
+bin/install-skill-pack NurstarK/lazybrief
 ```
 
-Then add one line under `skills:` in `aeon.yml` (schedules are UTC):
-```yaml
-  lazybrief: { enabled: true, schedule: "0 5 * * *", var: "" } # overnight do-it-later inbox -> 5-line brief (local Ollama)
+Clone the app **outside** your Aeon checkout, pinned to a release tag:
+```bash
+git clone --branch v0.1.0 --depth 1 https://github.com/NurstarK/lazybrief /opt/lazybrief
 ```
+
+Then enable it in `aeon.yml`, pointing `var` at the checkout (schedules are UTC):
+```yaml
+  lazybrief: { enabled: true, schedule: "0 5 * * *", var: "/opt/lazybrief" } # overnight do-it-later inbox -> 5-line brief (local Ollama)
+```
+
+For a purely local run (`scripts/dry-run.sh run lazybrief`), `var: ""` with a
+checkout at `apps/lazybrief` also works — just know a self-hosted runner will
+wipe it.
 
 ## Environment
 
